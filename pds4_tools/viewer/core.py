@@ -418,11 +418,12 @@ class Window(object):
         if default is not None:
             variable.set(default)
 
-        trace_id = variable.trace(mode, callback)
+
+        trace_id = variable.trace_add(mode, callback)
 
         # Create a callback to delete the trace, otherwise it will stay bound and prevent python
         # from clearing window memory on close
-        self._add_callback('close', variable.trace_vdelete, 'w', trace_id)
+        self._add_callback('close', variable.trace_remove, 'write', trace_id)
 
         return trace_id
 
@@ -787,11 +788,11 @@ class SearchableTextWindowMixIn(object):
 
         # Stores search string in search box
         self._search_text = StringVar()
-        self._add_trace(self._search_text, 'w', self._do_search)
+        self._add_trace(self._search_text, 'write', self._do_search)
 
         # Stores whether match case box is selected
         self._match_case = BooleanVar()
-        self._add_trace(self._match_case, 'w', self._do_search, default=False)
+        self._add_trace(self._match_case, 'write', self._do_search, default=False)
 
         # Stores a list of 3-valued tuples, each containing the line number, start position
         # and stop position of each result that matches the search string; and stores the index
